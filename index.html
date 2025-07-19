@@ -2,77 +2,45 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>نظرسنجی کتاب</title>
+  <title>نظرسنجی خیلی سبز</title>
   <style>
     body {
-      font-family: "Lalezar", sans-serif;
-      background: #f9f9f9;
+      font-family: 'Lalezar', cursive;
+      background-color: #f9f9f9;
       text-align: center;
-      padding: 50px;
+      padding: 30px;
     }
-    input, select, button {
-      margin: 10px;
-      padding: 10px;
-      font-family: inherit;
+    input, label, button {
       font-size: 18px;
-    }
-    #message {
-      margin-top: 20px;
-      font-weight: bold;
-      color: green;
+      margin: 10px;
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <h1>نظرسنجی بهترین انتشارات</h1>
-
-  <input type="text" id="name" placeholder="نام و نام خانوادگی" required />
-  <br>
-  <select id="option" required>
-    <option value="">-- انتخاب کنید --</option>
-    <option value="خیلی سبز">خیلی سبز</option>
-    <option value="سفیرخرد">سفیرخرد</option>
-    <option value="نشرالگو">نشرالگو</option>
-  </select>
-  <br>
-  <button onclick="submitVote()">ثبت رأی</button>
-
-  <div id="message"></div>
+  <h1>📝 نظرسنجی انتخاب کتاب تست</h1>
+  <form onsubmit="submitVote(); return false;">
+    <input type="text" id="name" placeholder="نام و نام‌خانوادگی" required><br>
+    <label><input type="radio" name="vote" value="آمار و احتمال" required> آمار و احتمال</label><br>
+    <label><input type="radio" name="vote" value="هیچکدام"> هیچ‌کدام</label><br>
+    <button type="submit">ثبت رأی</button>
+  </form>
 
   <script>
     function submitVote() {
-      const name = document.getElementById("name").value.trim();
-      const option = document.getElementById("option").value;
-
-      if (!name || !option) {
-        document.getElementById("message").textContent = "لطفاً همه فیلدها را پر کنید.";
-        return;
-      }
+      const name = document.getElementById("name").value;
+      const vote = document.querySelector('input[name="vote"]:checked').value;
 
       fetch("https://script.google.com/macros/s/AKfycbySDY5Zsw5CnN-MUflzbK_IaG7CBKLgLHrsfPXXZnouQKR6x-X_-rfhMjpKjl-J7Qxmqw/exec", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+        body: new URLSearchParams({
           name: name,
-          option: option
+          vote: vote
         })
       })
-      .then(res => res.json())
-      .then(data => {
-        if (data.result === "success") {
-          document.getElementById("message").textContent = "رأی شما با موفقیت ثبت شد!";
-        } else {
-          document.getElementById("message").textContent = "خطا در ثبت رأی: " + data.message;
-        }
-      })
-      .catch(err => {
-        document.getElementById("message").textContent = "خطا در ارتباط با سرور!";
-        console.error(err);
-      });
+      .then(res => res.text())
+      .then(msg => alert(msg))
+      .catch(() => alert("❌ خطا در ارتباط با سرور"));
     }
   </script>
 </body>
