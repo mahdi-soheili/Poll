@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>نظرسنجی خیلی سبز</title>
   <style>
     body {
@@ -15,14 +15,14 @@
       margin: 10px;
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet" />
 </head>
 <body>
   <h1>📝 نظرسنجی انتخاب کتاب تست</h1>
   <form onsubmit="submitVote(); return false;">
-    <input type="text" id="name" placeholder="نام و نام‌خانوادگی" required><br>
-    <label><input type="radio" name="vote" value="آمار و احتمال" required> آمار و احتمال</label><br>
-    <label><input type="radio" name="vote" value="هیچکدام"> هیچ‌کدام</label><br>
+    <input type="text" id="name" placeholder="نام و نام‌خانوادگی" required /><br />
+    <label><input type="radio" name="vote" value="آمار و احتمال" required /> آمار و احتمال</label><br />
+    <label><input type="radio" name="vote" value="هیچ‌کدام" /> هیچ‌کدام</label><br />
     <button type="submit">ثبت رأی</button>
   </form>
 
@@ -33,14 +33,17 @@
 
       fetch("https://script.google.com/macros/s/AKfycbySDY5Zsw5CnN-MUflzbK_IaG7CBKLgLHrsfPXXZnouQKR6x-X_-rfhMjpKjl-J7Qxmqw/exec", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
         body: new URLSearchParams({
           name: name,
           vote: vote
         })
       })
-      .then(res => res.text())
-      .then(msg => alert(msg))
-      .catch(() => alert("❌ مشکل در ارتباط با سرور"));
+        .then(res => res.text())
+        .then(msg => alert(msg))
+        .catch(() => alert("❌ خطا در ارتباط با سرور"));
     }
   </script>
 </body>
