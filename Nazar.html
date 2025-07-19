@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>نظرسنجی زمان کلاس</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lalezar', cursive;
+      background: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+    input, button, select {
+      font-family: inherit;
+      font-size: 18px;
+      padding: 8px;
+      margin: 8px;
+    }
+    .result {
+      margin-top: 20px;
+      background: #eee;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .bar {
+      background-color: #4caf50;
+      height: 20px;
+      text-align: right;
+      color: white;
+      padding-right: 5px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>❓ به نظرت بهترین زمان کلاس تستی چه ساعتیه؟</h2>
+
+  <form id="pollForm">
+    <input type="text" id="fullname" placeholder="نام و نام خانوادگی" required>
+    <br>
+    <select id="vote" required>
+      <option value="">-- انتخاب کن --</option>
+      <option value="8">🕗 ساعت ۸</option>
+      <option value="10">🕙 ساعت ۱۰</option>
+      <option value="12">🕛 ساعت ۱۲</option>
+      <option value="14">🕑 ساعت ۱۴</option>
+    </select>
+    <br>
+    <button type="submit">ثبت رأی</button>
+  </form>
+
+  <div class="result" id="results" style="display:none;"></div>
+
+  <script>
+    const form = document.getElementById('pollForm');
+    const resultsDiv = document.getElementById('results');
+
+    const storageKey = "poll-votes";
+
+    function loadVotes() {
+      return JSON.parse(localStorage.getItem(storageKey)) || [];
+    }
+
+    function saveVotes(votes) {
+      localStorage.setItem(storageKey, JSON.stringify(votes));
+    }
+
+    function renderResults() {
+      const votes = loadVotes();
+      const counts = { "8": 0, "10": 0, "12": 0, "14": 0 };
+      const names = { "8": [], "10": [], "12": [], "14": [] };
+
+      votes.forEach(v => {
+        counts[v.choice]++;
+        names[v.choice].push(v.name);
+      });
+
+      const total = votes.length || 1;
+      resultsDiv.innerHTML = `<h3>📊 نتایج:</h3>`;
+      Object.keys(counts).forEach(time => {
+        const percent = ((counts[time] / total) * 100).toFixed(1);
+        resultsDiv.innerHTML += `
+          <p>ساعت ${time} - ${percent}% (${counts[time]} رأی)</p>
+          <div class="bar" style="width:${percent}%">${percent > 10 ? percent + '%' : ''}</div>
+          <small>رأی‌دهنده‌ها: ${names[time].join('، ') || '—'}</small>
+          <hr>
+        `;
+      });
+      resultsDiv.style.display = "block";
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('fullname').value.trim();
+      const choice = document.getElementById('vote').value;
+
+      if (!name || !choice) return;
+
+      const votes = loadVotes();
+      votes.push({ name, choice });
+      saveVotes(votes);
+      form.reset();
+      renderResults();
+    });
+
+    // نمایش نتایج اگر از قبل رأی داده شده بود
+    window.onload = () => {
+      if (loadVotes().length > 0) {
+        renderResults();
+      }
+    };
+  </script>
+
+</body>
+</html>
